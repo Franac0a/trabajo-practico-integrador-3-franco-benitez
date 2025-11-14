@@ -20,7 +20,7 @@ export const useForm = (intialValue = {}) => {
   //   funcion que se ejecuta al iniciar sesion y se manda a la bd
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    handleReset();
     try {
       const response = await fetch("http://localhost:3000/api/login", {
         method: "POST",
