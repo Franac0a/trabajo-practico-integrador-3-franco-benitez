@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
-export const useForm = (intialValue = {}) => {
-  const [formValue, setFormValue] = useState(intialValue);
-
+export const useForm = (initialValue = {}) => {
+  const [formValue, setFormValue] = useState(initialValue);
   const navigate = useNavigate();
 
   const handleChange = (event) => {
@@ -13,30 +12,32 @@ export const useForm = (intialValue = {}) => {
       [name]: value,
     });
   };
+
   const handleReset = () => {
-    setFormValue(intialValue);
+    setFormValue(initialValue);
   };
 
-  //   funcion que se ejecuta al iniciar sesion y se manda a la bd
   const handleSubmit = async (event) => {
     event.preventDefault();
-    handleReset();
+
     try {
       const response = await fetch("http://localhost:3000/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(formValue),
       });
 
       if (response.ok) {
         navigate("/home");
+        handleReset();
       } else {
         alert("Usuario o contraseña incorrectos");
       }
     } catch (error) {
-      console.error("Error al iniciar sesión:", error.msg);
+      console.error("Error al iniciar sesión:", error);
     }
   };
 

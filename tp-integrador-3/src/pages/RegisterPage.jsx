@@ -1,104 +1,102 @@
-import { useForm } from "../hooks/useForm.js";
+import { useState } from "react";
+import { useNavigate } from "react-router";
+
 export const RegisterPage = () => {
-  const { formValue, handleChange, handleSubmit } = useForm({
+  const navigate = useNavigate();
+  const [formState, setFormState] = useState({
     username: "",
     email: "",
     password: "",
-    firstname: "",
+    name: "",
     lastname: "",
-    dni: "",
   });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const { username, email, password, firstname, lastname, dni } = formValue;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormState((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    try {
+      const res = await fetch("http://localhost:3000/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(formState),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setSuccess(data.message || "Usuario registrado");
+        navigate("/login");
+      } else {
+        setError(data.message || "Error registrando usuario");
+      }
+    } catch (err) {
+      setError("Error en el servidor");
+      console.error(err);
+    }
+  };
 
   return (
-    <div className="d-flex justify-content-center mt-5">
-      {/* etiqueta form que es de formulario */}
-      <form
-        onSubmit={handleSubmit}
-        className="p-4 border rounded shadow-sm bg-light"
-        style={{ width: "320px" }}
-      >
-        <div className="mb-3">
-          <label className="form-label">Username</label>
-          <br />
-          <input
-            name="username"
-            value={username}
-            onChange={handleChange}
-            type="text"
-            required
-            className="form-control"
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Email</label>
-          <br />
-          <input
-            name="email"
-            value={email}
-            onChange={handleChange}
-            type="email"
-            required
-            className="form-control"
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Password</label>
-          <br />
-          <input
-            name="password"
-            value={password}
-            onChange={handleChange}
-            type="password"
-            required
-            className="form-control"
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Firstname</label>
-          <br />
-          <input
-            name="firstname"
-            value={firstname}
-            onChange={handleChange}
-            type="text"
-            required
-            className="form-control"
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Lastname</label>
-          <br />
-          <input
-            name="lastname"
-            value={lastname}
-            onChange={handleChange}
-            type="text"
-            required
-            className="form-control"
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">DNI</label>
-          <br />
-          <input
-            name="dni"
-            value={dni}
-            onChange={handleChange}
-            type="identification"
-            required
-            className="form-control"
-          />
-        </div>
-
-        <button type="submit" className="btn btn-primary w-100">
-          Registrarse
+    <div className="container mt-5">
+      <h2>Register</h2>
+      {error && <p className="text-danger">{error}</p>}
+      {success && <p className="text-success">{success}</p>}
+      <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
+        <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={formState.name}
+          onChange={handleChange}
+          className="form-control"
+          required
+        />
+        <input
+          type="text"
+          name="lastname"
+          placeholder="Lastname"
+          value={formState.lastname}
+          onChange={handleChange}
+          className="form-control"
+          required
+        />
+        <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          value={formState.username}
+          onChange={handleChange}
+          className="form-control"
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={formState.email}
+          onChange={handleChange}
+          className="form-control"
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formState.password}
+          onChange={handleChange}
+          className="form-control"
+          required
+        />
+        <button type="submit" className="btn btn-primary">
+          Register
         </button>
       </form>
     </div>
