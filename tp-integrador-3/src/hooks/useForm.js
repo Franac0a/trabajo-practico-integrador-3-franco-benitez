@@ -1,50 +1,27 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
 
-export const useForm = (initialValue = {}) => {
-  const [formValue, setFormValue] = useState(initialValue);
-  const navigate = useNavigate();
+export const useForm = (initialValue) => {
+  const [formState, setForm] = useState(initialValue);
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormValue({
-      ...formValue,
-      [name]: value,
-    });
+  const handleChange = ({ target }) => {
+    const { name, value, type, checked } = target;
+
+    const valueToUpdate = type === "checkbox" ? checked : value;
+
+    setForm({ ...formState, [name]: valueToUpdate });
   };
 
   const handleReset = () => {
-    setFormValue(initialValue);
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    try {
-      const response = await fetch("http://localhost:3000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(formValue),
-      });
-
-      if (response.ok) {
-        navigate("/home");
-        handleReset();
-      } else {
-        alert("Usuario o contraseña incorrectos");
-      }
-    } catch (error) {
-      console.error("Error al iniciar sesión:", error);
-    }
+    console.log(initialValue);
+    setForm(initialValue);
   };
 
   return {
+    formState,
     handleChange,
     handleReset,
-    handleSubmit,
-    formValue,
+    setForm,
   };
 };
+
+//Empezar por event e ir mirando la consola para ver como funciona el objeto.

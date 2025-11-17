@@ -31,7 +31,7 @@ export const HomePage = ({ taskRefreshKey }) => {
 
       if (profileResponse.ok) {
         const profileData = await profileResponse.json();
-        setUserData(profileData);
+        setUserData(profileData.user); // <-- Aquí extraemos solo el user
       }
 
       if (tasksResponse.ok) {
@@ -72,7 +72,7 @@ export const HomePage = ({ taskRefreshKey }) => {
         <h1 className="fs-2 fw-light text-secondary mb-4">
           Welcome{" "}
           <span className="fw-bold text-primary">
-            {userData?.name || "User"}
+            {userData?.name || "User"} {userData?.lastname || ""}
           </span>
         </h1>
 
